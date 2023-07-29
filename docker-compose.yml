@@ -7,3 +7,22 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3062:3069
+    # add volumes so we can mount our virtual directory with the local one.
+    # We do this by specifying our local directory first (./services/web_blog/) and the working directory of our micro-service (/go/src/app).
+    volumes:
+      - ./services/web_blog/:/go/src/app
+    depends_on:
+      - db
+    links:
+      - db
+
+  db:
+    container_name: db
+    build:
+      context: ./services/db
+      dockerfile: Dockerfile
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
